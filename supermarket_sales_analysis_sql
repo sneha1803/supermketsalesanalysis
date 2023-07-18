@@ -1,0 +1,53 @@
+USE project_supermarket_sales;
+SELECT * FROM supermarket_sales;
+-----------------------------------------------------------------------------------------
+-- DATA CLEANING --
+ALTER TABLE supermarket_sales CHANGE COLUMN Product_Line Category VARCHAR(50) NULL;
+
+SELECT Purchase_Date FROM supermarket_sales;
+DESCRIBE supermarket_sales;
+
+SET sql_safe_updates = 0;
+UPDATE supermarket_sales SET Purchase_Date = CASE 
+  WHEN Purchase_Date LIKE '%/%' THEN DATE_FORMAT(STR_TO_DATE(Purchase_Date,"%m/%d/%Y"), '%y-%m-%d')
+  WHEN Purchase_Date LIKE '%-%' THEN DATE_FORMAT(STR_TO_DATE(Purchase_Date,"%m-%d-%Y"), '%y-%m-%d')
+  ELSE NULL 
+END;
+
+ALTER TABLE supermarket_sales MODIFY COLUMN Purchase_Date DATE;
+-----------------------------------------------------------------------------------------
+-- DATA ANALYSIS --
+
+-- Does the membership depend on customer rating?
+SELECT SUM(Rating), Customer_Type
+FROM supermarket_sales
+GROUP BY Customer_Type;
+
+-- Does gross income depend on the
+-- i. proportion of customers in the loyalty program?
+SELECT SUM(Gross_Income), Customer_Type
+FROM supermarket_sales GROUP BY Customer_Type;
+-- ii. Does gross income depend on payment method?
+SELECT SUM(Gross_Income), Payment
+FROM supermarket_sales GROUP BY Payment;
+
+-- Are there any differences in indicators between men and women?
+-- i. Differences in membership/customer type
+SELECT COUNT(Customer_Type) AS M_or_N, Customer_Type, Customer_Gender
+FROM supermarket_sales GROUP BY Customer_Gender, Customer_Type;
+-- ii. Differences in Category
+SELECT COUNT(Customer_Gender), Category, Customer_Gender
+FROM supermarket_sales GROUP BY Customer_Gender, Category;
+-- iii. Differences in Income
+SELECT SUM(Gross_Income), Customer_Gender
+FROM supermarket_sales GROUP BY Customer_Gender;
+
+-- Which product category generates the highest income?
+SELECT SUM(Gross_Income), Category
+FROM supermarket_sales GROUP BY Category;
+
+-- Which branch has the best results in the loyalty program?
+SELECT Branch, Customer_Type,
+COUNT(*) AS count FROM supermarket_sales
+GROUP BY Branch, Customer_Type ORDER BY Branch;
+-----------------------------------------------------------------------------------------
