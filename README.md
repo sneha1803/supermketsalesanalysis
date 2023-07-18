@@ -7,3 +7,4 @@
 
 
 Sales Database file: https://www.kaggle.com/datasets/aungpyaeap/supermarket-sales
+![supermarket_sales_dashboard](https://github.com/sneha1803/supermketsalesanalysis/assets/139860645/0cf32e58-c56f-4c9c-8f04-45e5c05c0e3d)
